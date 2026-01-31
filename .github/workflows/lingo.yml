@@ -27,6 +27,8 @@ jobs:
         run: node scripts/translate.js
         env:
           LINGO_API_KEY: ${{ secrets.LINGO_API_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Commit Translations (If changes)
         run: |
