@@ -12,22 +12,25 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Lingo.dev CLI
-        uses: lingo-dev/setup-cli@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          api-key: ${{ secrets.LINGO_API_KEY }}
+          node-version: '18'
 
-      - name: Extract Strings
-        run: lingo extract ./app
+      - name: Install Dependencies
+        run: npm ci
 
-      - name: Translate Content
-        run: |
-          lingo translate --target es,fr,de,ja
-          
-      - name: Push Translations
+      - name: Lingo Audit (CI Check)
+        run: node scripts/audit-cli.js
+
+      - name: Run Translation (Simulated)
+        run: node scripts/translate.js
+        env:
+          LINGO_API_KEY: ${{ secrets.LINGO_API_KEY }}
+
+      - name: Commit Translations (If changes)
         run: |
           git config --global user.name 'Lingo Bot'
           git config --global user.email 'bot@lingo.dev'
-          git add locales/
-          git commit -m "chore: update translations [skip ci]"
-          git push
+          git add content/locales/ || true
+          git commit -m "chore: update translations [skip ci]" || echo "No changes to commit"
