@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Message {
+  id               BigInt   @id @default(autoincrement())
+  createdAt        DateTime @default(now()) @map("created_at")
+  content          String
+  originalLanguage String   @default("en") @map("original_language")
+  userName         String   @map("user_name")
+  translations     Json?    @default("{}")
+
+  @@map("messages")
+}
+
+model Document {
+  id           BigInt   @id @default(autoincrement())
+  createdAt    DateTime @default(now()) @map("created_at")
+  title        String   @default("Untitled")
+  content      String
+  translations Json?    @default("{}")
+  lastUpdatedBy String? @map("last_updated_by")
+
+  @@map("documents")
+}

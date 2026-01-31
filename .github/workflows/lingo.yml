@@ -1,0 +1,33 @@
+name: Lingo.dev CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Lingo.dev CLI
+        uses: lingo-dev/setup-cli@v1
+        with:
+          api-key: ${{ secrets.LINGO_API_KEY }}
+
+      - name: Extract Strings
+        run: lingo extract ./app
+
+      - name: Translate Content
+        run: |
+          lingo translate --target es,fr,de,ja
+          
+      - name: Push Translations
+        run: |
+          git config --global user.name 'Lingo Bot'
+          git config --global user.email 'bot@lingo.dev'
+          git add locales/
+          git commit -m "chore: update translations [skip ci]"
+          git push
