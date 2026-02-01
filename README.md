@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LingoLive 🌍
 
-## Getting Started
+**The Borderless Collaboration Workspace for Global Teams.**
 
-First, run the development server:
+LingoLive is a real-time collaboration platform that eliminates language barriers in remote work. It combines instant chat translation, voice synthesis, and developer tools into a single, seamless workspace.
 
+Built for the **Lingo.dev Hackathon**.
+
+---
+
+## 🛠 Features
+
+### 1. Real-Time Multilingual Chat
+- **Zero-Latency Experience:** Messages appear instantly (Optimistic UI) while translation happens in the background.
+- **Context-Aware:** Uses the Lingo Engine to understand context (e.g., distinguishing "Bank" as a financial institution vs. a river bank).
+- **Cross-Language Support:** Users see messages in their preferred language (English, Spanish, French, German, Japanese, Nepali).
+
+### 2. Native Text-to-Speech (TTS)
+- **"Listen" to any Message:** Integrated browser-native Speech Synthesis.
+- **Language Auto-Detection:** Automatically selects the correct voice pack (e.g., `ja-JP` for Japanese) to ensure accurate pronunciation.
+- **Accessibility:** Makes global communication accessible to everyone.
+
+### 3. Developer File Hub (Drag & Drop)
+- **JSON Localization Automator:** Solves the pain of manual software localization.
+- **Visual Split-View:** Compare original `en.json` vs translated `es.json` side-by-side.
+- **Recursive Parsing:** Smartly handles nested JSON objects preventing crashes on complex config files.
+- **One-Click Download:** Get production-ready localized files in seconds.
+
+### 4. Lingo Auditor (CLI & MCP)
+- **Intelligent Code Scanning:** A custom script (`audit-cli.js`) that scans the codebase for hardcoded strings and brand violations.
+- **CI/CD Integration:** Runs automatically in GitHub Actions to prevent non-localized code from hitting production.
+- **MCP Architecture:** Built with Model Context Protocol principles for future AI agent integration.
+
+---
+
+## 💻 Tech Stack
+
+- **Framework:** Next.js 14+ (App Router)
+- **Styling:** Tailwind CSS + Framer Motion (Glassmorphism Design)
+- **Backend/Realtime:** Supabase (PostgreSQL + Realtime Channels)
+- **Translation Engine:** Lingo.dev SDK
+- **CI/CD:** GitHub Actions (Automated Audits)
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Rupe88/lingolive-hackathon.git
+cd lingolive-hackathon
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Environment Setup
+Create a `.env.local` file in the root directory:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+NEXT_PUBLIC_LINGO_API_KEY=your_lingo_key
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-## Learn More
+### 4. Run Locally
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧪 How to Demo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Login:** Enter your name and select a language (e.g., "Japanese").
+2. **Chat:** Type a message in English. See it appear in Japanese for the receiver. Click the "Speaker" icon to hear it.
+3. **File Hub:**
+   - Go to the **File Hub** tab.
+   - Drag & Drop the provided `demo-assets/en.json` file.
+   - Click **Start Localization**.
+   - See the real-time split view comparison and download the result.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+MIT License. Created by Rupesh for the Lingo.dev Hackathon 2024.

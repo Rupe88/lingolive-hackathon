@@ -64,49 +64,35 @@ export default function FileHub() {
         if (!parsedContent) return
         setStatus('translating')
 
-        const keys = Object.keys(parsedContent)
-        const values = Object.values(parsedContent)
-
-        // Batch translate
-        // Note: For large files, we should chunk this. For hackathon, strict batch 50 is fine.
-        const result: Record<string, string> = {}
-
-        // Simulating batch for demo simplicity (or use real batch if implemented robustly)
-        // Here we use the server action we already built
-        // We will just do one big batch call for the demo 
-        // (Assuming file is small < 20 keys for demo)
-
-        if (values.length > 50) {
-            alert("Demo limit: Please use a smaller JSON file (< 50 keys).")
-            setStatus('idle')
-            return
-        }
-
         try {
-            // Map values to translations
-            const translatedValues = await translateTextBatchServer(
-                values.join(' ||| '), // Using a separator hack or better, just one by one in parallel for quality
-                [targetLang],
-                'en',
-                'Software UI String'
-            )
+            // Recursive function to handle nested objects
+            const translateRecursive = async (obj: any): Promise<any> => {
+                if (typeof obj === 'string') {
+                    // Translate leaf node (string)
+                    const batch = await translateTextBatchServer(obj, [targetLang], 'en', 'UI Label')
+                    return batch[targetLang] || obj
+                } else if (typeof obj === 'object' && obj !== null) {
+                    // Recurse into object/array
+                    const newObj: any = Array.isArray(obj) ? [] : {}
+                    const entries = Object.entries(obj)
 
-            // The batch server returns { [lang]: "translated text" } for the WHOLE INPUT?
-            // Wait, our `translateTextBatchServer` takes (text, targetLangs). 
-            // It translates ONE string to MANY languages.
-            // We need MANY strings to ONE language.
+                    // Process keys in parallel
+                    const translatedEntries = await Promise.all(
+                        entries.map(async ([k, v]) => {
+                            const translatedValue = await translateRecursive(v)
+                            return [k, translatedValue]
+                        })
+                    )
 
-            // Let's do parallel requests for "Perfect" results (slower but safer)
-            const promises = keys.map(async (key, index) => {
-                const original = values[index]
-                const batch = await translateTextBatchServer(original, [targetLang], 'en', 'UI Label')
-                return { key, val: batch[targetLang] }
-            })
+                    translatedEntries.forEach(([k, v]) => {
+                        newObj[k] = v
+                    })
+                    return newObj
+                }
+                return obj // Numbers, booleans return as-is
+            }
 
-            const results = await Promise.all(promises)
-            results.forEach(r => {
-                result[r.key] = r.val
-            })
+            const result = await translateRecursive(parsedContent)
 
             setTranslations(result)
             setStatus('done')
@@ -178,14 +164,14 @@ export default function FileHub() {
 
                     <div className="flex items-center gap-4 mb-6">
                         <span className="text-gray-400 text-sm">Translate to:</span>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
                             {languages.map(l => (
                                 <button
                                     key={l.code}
                                     onClick={() => setTargetLang(l.code)}
                                     className={`px-3 py-1.5 rounded-lg text-sm border transition-all ${targetLang === l.code
-                                            ? 'bg-purple-500 text-white border-purple-500'
-                                            : 'bg-black/20 border-gray-700 text-gray-400 hover:border-gray-500'
+                                        ? 'bg-purple-500 text-white border-purple-500 shadow-md shadow-purple-500/20'
+                                        : 'bg-black/20 border-gray-700 text-gray-400 hover:border-gray-600 hover:bg-gray-800'
                                         }`}
                                 >
                                     {l.name}
@@ -220,8 +206,43 @@ export default function FileHub() {
                                 <span className="text-green-200 text-sm">Translation Complete!</span>
                             </div>
 
-                            <div className="flex-1 bg-[#0a0a12] rounded-xl p-4 overflow-y-auto font-mono text-xs text-gray-300 border border-gray-800 mb-4">
-                                <pre>{JSON.stringify(translations, null, 2)}</pre>
+                            <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 mb-4">
+                                {/* LEFT: Original */}
+                                <div className="flex-1 bg-gray-950/30 rounded-xl overflow-hidden border border-gray-800 flex flex-col shadow-inner min-h-[200px]">
+                                    <div className="bg-gray-900/50 px-4 py-2 border-b border-gray-800 flex justify-between items-center">
+                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Original ({file.name})</span>
+                                    </div>
+                                    <div className="p-4 overflow-y-auto flex-1 custom-scrollbar group">
+                                        <pre className="font-mono text-xs text-gray-500 whitespace-pre-wrap leading-relaxed group-hover:text-gray-400 transition-colors">
+                                            {JSON.stringify(parsedContent, null, 2)}
+                                        </pre>
+                                    </div>
+                                </div>
+
+                                {/* RIGHT: Translated (Highlight) */}
+                                <div className="flex-1 bg-gray-950/80 rounded-xl overflow-hidden border border-purple-500/30 flex flex-col shadow-lg shadow-purple-900/10 min-h-[200px]">
+                                    <div className="bg-gray-900/80 backdrop-blur px-4 py-2 border-b border-gray-800 flex justify-between items-center">
+                                        <div className="flex items-center gap-2">
+                                            {/* Mac Dots */}
+                                            <div className="flex gap-1.5 opacity-50">
+                                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                                                <div className="w-2 h-2 rounded-full bg-green-500" />
+                                            </div>
+                                            <span className="ml-2 text-[10px] font-bold text-purple-400 uppercase tracking-widest">{targetLang}.json</span>
+                                        </div>
+                                        <button
+                                            onClick={() => navigator.clipboard.writeText(JSON.stringify(translations, null, 2))}
+                                            className="text-[10px] bg-purple-500/10 hover:bg-purple-500/20 px-2 py-1 rounded text-purple-300 transition-colors uppercase tracking-wider font-semibold"
+                                        >
+                                            Copy
+                                        </button>
+                                    </div>
+                                    <div className="p-4 overflow-y-auto flex-1 custom-scrollbar">
+                                        <pre className="font-mono text-xs text-purple-100 whitespace-pre-wrap leading-relaxed">
+                                            {JSON.stringify(translations, null, 2)}
+                                        </pre>
+                                    </div>
+                                </div>
                             </div>
 
                             <button
