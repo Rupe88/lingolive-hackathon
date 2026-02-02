@@ -97,4 +97,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ---
 
 ## 📄 License
-MIT License. Created by Rupesh for the Lingo.dev Hackathon 2024.
+MIT License. Created by Rupesh for the Lingo.dev Hackathon 2026.
