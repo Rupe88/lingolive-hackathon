@@ -114,7 +114,15 @@ export default function ChatRoom() {
                         if (data && data.length > 0) {
                             // Filter out messages that are MINE (I have them optimistically via local state)
                             const myName = user?.name?.trim().toLowerCase();
-                            const foreignMessages = data.filter(m => m.user_name?.trim().toLowerCase() !== myName)
+
+                            // STRICT DEDUPLICATION:
+                            // 1. Ignore messages from 'me' (Optimistic UI handles them)
+                            // 2. Ignore messages we already have by ID (Socket might have caught them)
+                            const currentIds = new Set(messagesRef.current.map(m => m.id))
+                            const foreignMessages = data.filter(m =>
+                                m.user_name?.trim().toLowerCase() !== myName &&
+                                !currentIds.has(m.id)
+                            )
 
                             if (foreignMessages.length > 0) {
                                 setMessages((prev) => [...prev, ...foreignMessages])

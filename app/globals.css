@@ -17,7 +17,7 @@
 }
 
 body {
-  background: var(--background);
+  background: radial-gradient(circle at 50% 0%, #1a103c 0%, #030014 60%);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   overflow: hidden;

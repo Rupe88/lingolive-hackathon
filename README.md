@@ -45,7 +45,11 @@ Built for the **Lingo.dev Hackathon**.
 - **Framework:** Next.js 14+ (App Router)
 - **Styling:** Tailwind CSS + Framer Motion (Glassmorphism Design)
 - **Backend/Realtime:** Supabase (PostgreSQL + Realtime Channels)
-- **Translation Engine:** Lingo.dev SDK
+- **Lingo.dev Ecosystem:**
+  - **SDK:** `lingo.dev/sdk` (Real-time Context & Translation)
+  - **CLI:** Custom `audit-cli.js` (Built with Node.js)
+  - **MCP:** Model Context Protocol Server (`scripts/mcp-server.js`)
+  - **GitHub Actions:** Automated CI pipeline (`.github/workflows/lingo.yml`)
 - **CI/CD:** GitHub Actions (Automated Audits)
 
 ---
