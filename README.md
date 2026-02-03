@@ -98,5 +98,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
+---
+
+## 🎉 Fun Fact
+During testing, **8 of my college friends** joined the same LingoLive room. We spent hours chatting, shouting random words, and testing the limits of the translation engine (even with some *colorful* language 😂). It proved that language barriers can't stop a good time!
+
+---
+
 ## 📄 License
 MIT License. Created by Rupesh for the Lingo.dev Hackathon 2026.
