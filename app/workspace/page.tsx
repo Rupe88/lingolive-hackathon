@@ -7,17 +7,53 @@ import FileHub from '@/components/FileHub'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { FileText, Folder } from 'lucide-react'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function Workspace() {
     const { user, isLoading } = useUser()
     const router = useRouter()
     const [activeTab, setActiveTab] = useState<'document' | 'files'>('document')
+    const [onlineCount, setOnlineCount] = useState(1); // Default to 1 (Me)
 
     useEffect(() => {
         if (!isLoading && !user) {
             router.push('/')
         }
     }, [user, isLoading, router])
+
+    /* Realtime User Count */
+    useEffect(() => {
+        if (!user) return;
+
+        // Use Supabase Presence to track connected users in the 'global' room
+        const room = supabase.channel('global_presence', {
+            config: {
+                presence: {
+                    key: user.name,
+                },
+            },
+        })
+
+        room
+            .on('presence', { event: 'sync' }, () => {
+                const newState = room.presenceState()
+                // Simple count of unique keys (or total connections)
+                const count = Object.keys(newState).length
+                setOnlineCount(count > 0 ? count : 1)
+            })
+            .subscribe(async (status) => {
+                if (status === 'SUBSCRIBED') {
+                    await room.track({
+                        online_at: new Date().toISOString(),
+                        user: user.name
+                    })
+                }
+            })
+
+        return () => {
+            supabase.removeChannel(room)
+        }
+    }, [user])
 
     if (isLoading) return (
         <div className="h-screen w-screen bg-[#030014] flex items-center justify-center text-white">
@@ -38,14 +74,34 @@ export default function Workspace() {
                     </span>
                 </div>
                 <div className="flex items-center gap-4">
+                    {/* Live Users Badge */}
+                    <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20">
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        <span className="text-[10px] font-medium text-green-400 uppercase tracking-widest">
+                            {onlineCount} Online
+                        </span>
+                    </div>
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-sm font-bold shadow-lg shadow-purple-500/20">
                             {user.name[0]?.toUpperCase()}
                         </div>
                         <div className="hidden sm:block text-sm">
                             <p className="text-white leading-none font-medium">{user.name}</p>
-                            <p className="text-gray-500 text-[10px] uppercase tracking-wide mt-0.5">
-                                Speaking {user.preferredLanguage === 'es' ? 'Spanish' : user.preferredLanguage === 'fr' ? 'French' : 'English'}
+                            <p className="text-gray-500 text-[10px] uppercase tracking-wide mt-0.5 flex items-center gap-1">
+                                Speaking
+                                <span className="text-sm">
+                                    {{
+                                        'en': '🇺🇸',
+                                        'es': '🇪🇸',
+                                        'fr': '🇫🇷',
+                                        'de': '🇩🇪',
+                                        'ja': '🇯🇵',
+                                        'ne': '🇳🇵'
+                                    }[user.preferredLanguage]}
+                                </span>
                             </p>
                         </div>
                     </div>

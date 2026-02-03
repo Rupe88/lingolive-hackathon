@@ -18,6 +18,7 @@ Built for the **Lingo.dev Hackathon**.
 ## 🛠 Features
 
 ### 1. Real-Time Multilingual Chat
+![Workspace Chat](public/screenshots/workspace.png)
 - **Zero-Latency Experience:** Messages appear instantly (Optimistic UI) while translation happens in the background.
 - **Context-Aware:** Uses the Lingo Engine to understand context (e.g., distinguishing "Bank" as a financial institution vs. a river bank).
 - **Cross-Language Support:** Users see messages in their preferred language (English, Spanish, French, German, Japanese, Nepali).
@@ -28,6 +29,7 @@ Built for the **Lingo.dev Hackathon**.
 - **Accessibility:** Makes global communication accessible to everyone.
 
 ### 3. Developer File Hub (Drag & Drop)
+![File Hub](public/screenshots/filehub.png)
 - **JSON Localization Automator:** Solves the pain of manual software localization.
 - **Visual Split-View:** Compare original `en.json` vs translated `es.json` side-by-side.
 - **Recursive Parsing:** Smartly handles nested JSON objects preventing crashes on complex config files.
