@@ -10,7 +10,7 @@ Built for the **Lingo.dev Hackathon**.
 
 ## 🎥 Video Demo
 
-[![LingoLive Demo](https://cdn.loom.com/sessions/thumbnails/da70d47439c24380a0249e8a302c4ac9-with-play.gif)](https://www.loom.com/share/da70d47439c24380a0249e8a302c4ac9)
+[![LingoLive Demo](https://cdn.loom.com/sessions/thumbnails/da70d47439c24380a0249e8a302c4ac9-with-play.jpg)](https://www.loom.com/share/da70d47439c24380a0249e8a302c4ac9)
 *(Click the image to watch the demo)*
 
 ---
